@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.8'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id "com.github.node-gradle.node" version "3.0.1"
 }
 
 group = 'io.maxiplux'
@@ -20,14 +21,55 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'com.vladmihalcea:hibernate-types-5:2.21.1'
+    
+    implementation 'commons-io:commons-io:2.11.0'
+
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    implementation "org.springdoc:springdoc-openapi-ui:1.6.14"
+    implementation "org.springdoc:springdoc-openapi-security:1.6.14"
+
+    // https://mvnrepository.com/artifact/org.postgresql/postgresql
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.5.1'
+
+
+
+    implementation "org.apache.commons:commons-compress:1.21"
+    implementation "javax.validation:validation-api:2.0.2"
+    implementation "javax.validation:validation-api:2.0.1.Final"
+// https://mvnrepository.com/artifact/com.h2database/h2
+    testImplementation group: 'com.h2database', name: 'h2', version: '2.1.214'
+
+// https://mvnrepository.com/artifact/org.mockito/mockito-core
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.0.0'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.0.0'
+}
+
+node {
+    version = '19.5.0'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+
+
+
+task buildAngular(type:Exec) {
+
+
+    workingDir "./"
+    inputs.dir "./"
+
+    commandLine "./frontend.sh"
 }
