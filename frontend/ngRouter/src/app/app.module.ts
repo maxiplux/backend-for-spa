@@ -3,26 +3,36 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
-import { AboutComponent } from './about/about.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { HomeComponent } from './components/home/home.component';
+import { AboutComponent } from './components/about/about.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 import appRoutes from "./routerConfig";
-import { NavbarComponent } from './navbar/navbar.component';
-import { FooterComponent } from './footer/footer.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { FooterComponent } from './components/footer/footer.component';
+import {PostService} from "./services/post.services";
+
+import {HttpClientModule} from "@angular/common/http";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {PostModule} from "./index/post.module";
 
 @NgModule({
   declarations: [
+
     AppComponent,
     HomeComponent,
     AboutComponent,
     DashboardComponent,
     NavbarComponent,
-    FooterComponent
+    FooterComponent,
+
+
   ],
   imports: [
-    BrowserModule, RouterModule.forRoot(appRoutes,{useHash: true})
+
+    BrowserModule,HttpClientModule,PostModule, RouterModule.forRoot(appRoutes,{useHash: true}), FormsModule,
+    ReactiveFormsModule
   ],
-  providers: [],
+  providers: [PostService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

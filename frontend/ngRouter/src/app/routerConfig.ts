@@ -1,9 +1,13 @@
 import { Routes } from '@angular/router';
-import {HomeComponent} from "./home/home.component";
-import {AboutComponent} from "./about/about.component";
-import {DashboardComponent} from "./dashboard/dashboard.component";
+import {HomeComponent} from "./components/home/home.component";
+import {AboutComponent} from "./components/about/about.component";
+import {DashboardComponent} from "./components/dashboard/dashboard.component";
+import {IndexComponent} from "./index/index.component";
 
 const appRoutes: Routes = [
+  { path: 'index',
+    component: IndexComponent
+  },
   { path: 'home',
     component: HomeComponent
   },

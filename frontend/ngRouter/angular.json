@@ -7,23 +7,14 @@
       "projectType": "application",
       "schematics": {},
       "root": "",
-
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "baseHref": "/app/",
-            "outputPath": "../../src/main/resources/static/",
-
-
-
-
-            "index": {
-              "input": "src/index.html",
-              "output": "../templates/index.html"
-            },
+            "outputPath": "dist/ng-router",
+            "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -40,7 +31,16 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/app/",
+              "outputPath": "../../src/main/resources/static/",
 
+
+
+
+              "index": {
+                "input": "src/index.html",
+                "output": "../templates/index.html"
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -60,7 +60,7 @@
               "optimization": false,
               "vendorChunk": true,
               "extractLicenses": false,
-              "sourceMap": false,
+              "sourceMap": true,
               "namedChunks": true
             }
           },
