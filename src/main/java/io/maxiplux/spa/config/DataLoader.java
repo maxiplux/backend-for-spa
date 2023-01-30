@@ -1,8 +1,11 @@
 package io.maxiplux.spa.config;
 
+import io.maxiplux.spa.models.Comments;
+import io.maxiplux.spa.models.Post;
 import io.maxiplux.spa.models.Role;
 import io.maxiplux.spa.models.User;
 import io.maxiplux.spa.repositories.RoleRepository;
+import io.maxiplux.spa.services.PostServices;
 import io.maxiplux.spa.services.UserServices;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.List;
 
 //@Component
@@ -34,6 +38,9 @@ public class DataLoader implements ApplicationRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private PostServices postServices;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
@@ -43,8 +50,17 @@ public class DataLoader implements ApplicationRunner {
 
         User user= User.builder().username("admin").password(this.passwordEncoder.encode("admin")).enabled(true).roles(roles).build();
         this.userServices.saveUser(user);
+
+        //create commments for post
+        for (int i = 0; i < 100; i++) {
+
+            Comments commment=Comments.builder().comment("this is a comment"+i).author("juan"+i).build();
+            this.postServices.save(Post.builder().title("title1"+i).content("content1"+i).comments(Arrays.asList(commment)).build());
+        }
         log.info("DataLoader is running");
+
     }
+
 
 
 }
