@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 @Entity
@@ -22,6 +24,7 @@ public class Role implements Serializable {
 
 	private String authority;
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 }
