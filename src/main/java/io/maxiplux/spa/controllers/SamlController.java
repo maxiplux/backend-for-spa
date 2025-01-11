@@ -1,5 +1,6 @@
 package io.maxiplux.spa.controllers;
 
+import io.maxiplux.spa.models.CustomUserDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticatedPrincipal;
@@ -8,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Controller
@@ -29,7 +31,8 @@ public class SamlController {
     @GetMapping("/user")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @ResponseBody
-    public String greeting() {
+    public String greeting(HttpSession session) {
+        CustomUserDTO userDTO = (CustomUserDTO) session.getAttribute("USER_DTO");
         return "I'm SAML user!";
     }
 

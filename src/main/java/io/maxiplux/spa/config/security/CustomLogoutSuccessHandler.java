@@ -21,5 +21,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         log.info("Logout successful for user: {}", Optional.ofNullable(authentication).map(Authentication::getName).orElse("Anonymous"));
         response.sendRedirect("/app/logout"); // Redirect to a custom logout success page
     }
+
+
 }
 
