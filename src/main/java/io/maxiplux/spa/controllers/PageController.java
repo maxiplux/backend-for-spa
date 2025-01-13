@@ -9,8 +9,10 @@ import org.springframework.security.saml2.provider.service.registration.RelyingP
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/extras/")
 class PageController {
 
 
@@ -25,7 +27,7 @@ class PageController {
     public ResponseEntity<String> metadata(@PathVariable String registrationId) {
         RelyingPartyRegistration registration =
                 relyingPartyRegistrationRepository.findByRegistrationId(registrationId);
-
+        //http://localhost:8080/app/extras/saml2/service-provider-metadata/pingone/
         if (registration == null) {
             return ResponseEntity.notFound().build();
         }
