@@ -1,35 +1,59 @@
 package io.maxiplux.spa.controllers;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.saml2.provider.service.metadata.Saml2MetadataResolver;
+import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
+import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 class PageController {
 
 
 
-    @GetMapping("/")
-    public String viewHomePage(Model model) {
-        model.addAttribute("test", "employeeServiceImpl.getAllEmployee()");
-        return "index";
+    @Autowired
+    private RelyingPartyRegistrationRepository relyingPartyRegistrationRepository;
+
+    @Autowired
+    private Saml2MetadataResolver saml2MetadataResolver;
+
+    @GetMapping("/saml2/service-provider-metadata/{registrationId}")
+    public ResponseEntity<String> metadata(@PathVariable String registrationId) {
+        RelyingPartyRegistration registration =
+                relyingPartyRegistrationRepository.findByRegistrationId(registrationId);
+
+        if (registration == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String metadata = saml2MetadataResolver.resolve(registration);
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_XML)
+                .body(metadata);
     }
 
-
-    @GetMapping("/admin/")
-    public String viewHomePageForAdmin(Model model) {
-        model.addAttribute("test", "employeeServiceImpl.getAllEmployee()");
-        return "index";
-    }
-
-    @GetMapping("/view-admin/")
-    public String admin(Model model) {
-        model.addAttribute("test", "employeeServiceImpl.getAllEmployee()");
-        return "admin";
-    }
+//    @GetMapping("/")
+//    public String viewHomePage(Model model) {
+//        model.addAttribute("test", "employeeServiceImpl.getAllEmployee()");
+//        return "index";
+//    }
+//
+//
+//    @GetMapping("/admin/")
+//    public String viewHomePageForAdmin(Model model) {
+//        model.addAttribute("test", "employeeServiceImpl.getAllEmployee()");
+//        return "index";
+//    }
+//
+//    @GetMapping("/view-admin/")
+//    public String admin(Model model) {
+//        model.addAttribute("test", "employeeServiceImpl.getAllEmployee()");
+//        return "admin";
+//    }
 }
