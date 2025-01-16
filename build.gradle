@@ -25,7 +25,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'com.vladmihalcea:hibernate-types-5:2.21.1'
-    
+
     implementation 'commons-io:commons-io:2.11.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -42,7 +42,6 @@ dependencies {
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.5.1'
 
 
-
     implementation "org.apache.commons:commons-compress:1.21"
     implementation "javax.validation:validation-api:2.0.2"
     implementation "javax.validation:validation-api:2.0.1.Final"
@@ -55,9 +54,9 @@ dependencies {
 
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.security:spring-security-saml2-service-provider'
-    implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
 
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.security:spring-security-oauth2-jose'
 
 }
 
@@ -70,9 +69,7 @@ tasks.named('test') {
 }
 
 
-
-
-task buildAngular(type:Exec) {
+task buildAngular(type: Exec) {
 
 
     workingDir "./"

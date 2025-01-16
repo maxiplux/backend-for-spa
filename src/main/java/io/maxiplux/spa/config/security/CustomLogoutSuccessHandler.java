@@ -1,5 +1,6 @@
 package io.maxiplux.spa.config.security;
 
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;

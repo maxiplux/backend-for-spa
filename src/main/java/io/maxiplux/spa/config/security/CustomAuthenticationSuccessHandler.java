@@ -1,10 +1,14 @@
 package io.maxiplux.spa.config.security;
 
+
 import io.maxiplux.spa.models.CustomUserDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
-import org.springframework.security.saml2.provider.service.authentication.Saml2Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -13,49 +17,56 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException
-    {
-        // Custom logic after successful authentication
-        log.info("Authentication successful for user: {}", authentication.getName());
-        if (authentication instanceof Saml2Authentication) {
-            Saml2Authentication saml2Auth = (Saml2Authentication) authentication;
-            Map<String, List<Object>> attributes =
-                    ((DefaultSaml2AuthenticatedPrincipal) saml2Auth.getPrincipal()).getAttributes();
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        // Extract authorities from cognito:groups
+        Map<String, Object> attributes = ((OidcUser) authentication.getPrincipal()).getAttributes();
 
-            CustomUserDTO userDTO = CustomUserDTO.builder()
-                    .username(getSingleAttribute(attributes, "saml_subject"))
-                    .email(getSingleAttribute(attributes, "email"))
-                    .groups(attributes.getOrDefault("groups", new ArrayList<>()).stream()
-                            .map(Object::toString)
-                            .toList())
-                    .givenName(getSingleAttribute(attributes, "name"))
-                    .authorities(new ArrayList<>(authentication.getAuthorities()))
-                    .build();
+        List<String> groups = ((List<?>) attributes.get("groups")).stream()
+                .map(Object::toString)
+                .collect(Collectors.toList());
 
-            HttpSession session = request.getSession();
-            session.setAttribute("USER_DTO", userDTO);
+        List<GrantedAuthority> authorities = groups.stream()
+                .map(group -> new SimpleGrantedAuthority("ROLE_" + group))
+                .collect(Collectors.toList());
 
-            log.info("User successfully authenticated: {}", userDTO.getUsername());
+        // Set the authorities to the authentication object
+        Authentication newAuth = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), authorities);
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+        log.info("User successfully authenticated with authorities: {}", authorities);
+
+        String username = (String) attributes.get("email");
+        String email = (String) attributes.get("email");
+        String accountId = (String) attributes.get("sub");
+        String givenName = (String) attributes.get("given_name");
 
 
-            response.sendRedirect("/app/home"); // Redirect to dashboard after login
-        }
+        CustomUserDTO customUserDTO = CustomUserDTO.builder()
+                .username(username)
+                .email(email)
+                .accountId(accountId)
+                .givenName(givenName)
+                .groups(groups)
+                .authorities(authorities)
+                .build();
 
+        HttpSession session = request.getSession();
+        session.setAttribute("USER_DTO", customUserDTO);
+
+        response.sendRedirect("/app/user"); // Redirect to dashboard after login
     }
-
 
     private String getSingleAttribute(Map<String, List<Object>> attributes, String key) {
         List<Object> values = attributes.get(key);
         return values != null && !values.isEmpty() ? values.get(0).toString() : null;
     }
 }
-
 
